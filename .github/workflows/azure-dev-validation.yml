@@ -1,7 +1,5 @@
 name: Template Validation
 on:
-  push:
-    branches: [main, user/** ]
   workflow_dispatch:
     inputs:
         reason:

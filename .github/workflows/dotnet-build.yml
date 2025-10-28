@@ -24,8 +24,8 @@ jobs:
       with:
         dotnet-version: 8.0.x
     - name: Restore dependencies
-      run: dotnet restore ./SPEAgentWithRetrieval.sln
+      run: dotnet restore ./AgentWithSPKnowledgeViaRetrieval.sln
     - name: Build
-      run: dotnet build ./SPEAgentWithRetrieval.sln -c Release
+      run: dotnet build ./AgentWithSPKnowledgeViaRetrieval.sln -c Release
     - name: Test
-      run: dotnet test ./SPEAgentWithRetrieval.sln --verbosity normal -c Release
+      run: dotnet test ./AgentWithSPKnowledgeViaRetrieval.sln --verbosity normal -c Release
