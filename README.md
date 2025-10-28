@@ -1,4 +1,4 @@
-# Azure AI Chat Agent with SharePoint RAG
+# Agent with SharePoint Knowledge - Web Application
 
 This project implements a **web application** chat agent using Azure AI Foundry SDK that retrieves and grounds responses on SharePoint content through Microsoft 365 Copilot Retrieval API. The application provides a web interface for compliance checking and document analysis.
 
@@ -121,6 +121,22 @@ The application will be available at:
 2. **Subsequent Runs**: Tokens are cached, no re-authentication needed
 3. **Compliance Checking**: Use the web interface to run compliance checks
 4. **View Results**: Responses include source document citations and violation reports
+
+
+### 4. Running using azd
+```bash
+# Initialize environment
+azd init
+
+# Provision and deploy
+azd up
+```
+1. **First Run**: After running the azd commands above you will be presented with
+the url to the deployed container app. Add the following redirect URIs on the same app registration as the one mentioned above
+
+- `https://{your-container-app-url}/signin-oidc`
+- `https://{your-container-app-url}/signout-callback-oidc`
+
 
 ## Architecture
 
