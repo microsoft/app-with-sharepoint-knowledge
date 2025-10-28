@@ -1,4 +1,4 @@
-# SPE Compliance Agent - Web Application
+# Agent with SharePoint Knowledge - Web Application
 
 An AI-powered compliance checking application for SharePoint documents that uses Azure OpenAI Service and Microsoft Graph.
 
