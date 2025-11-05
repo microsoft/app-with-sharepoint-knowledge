@@ -26,8 +26,8 @@ public class Microsoft365Options
     public bool UseUserAuthentication { get; set; } = true;
     public string[] Scopes { get; set; } = { "https://graph.microsoft.com/Files.Read.All", "https://graph.microsoft.com/Sites.Read.All" };
 
-    public string FileContextQuery { get; set; } = "What are all the relevant policies";
-    public string RulesContextQuery { get; set; } = "What are all the rules in rulebooks that apply to new policies";
+    public string FileContextQuery { get; set; } = string.Empty;
+    public string RulesContextQuery { get; set; } = string.Empty;
 }
 
 public class ChatSettingsOptions
