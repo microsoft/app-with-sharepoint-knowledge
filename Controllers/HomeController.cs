@@ -33,7 +33,7 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         // Step 1: Check if user is authenticated
-        if (!User.Identity?.IsAuthenticated ?? true)
+        if (!User?.Identity?.IsAuthenticated ?? true)
         {
             _logger.LogInformation("User not authenticated, showing sign-in interface");
             ViewBag.UserName = null;
@@ -41,39 +41,15 @@ public class HomeController : Controller
             return View();
         }
 
-        _logger.LogInformation("User authenticated: {User}", User.Identity?.Name);
-        ViewBag.UserName = User.Identity.Name;
+        _logger.LogInformation("User authenticated: {User}", User?.Identity?.Name);
+        ViewBag.UserName = User?.Identity?.Name;
         ViewBag.RequiresAuthentication = false;
 
-        // For authenticated users, we'll check consent when they actually try to use Graph API
-        // For now, just show them as ready to grant consent
-        ViewBag.RequiresConsent = true;
-        ViewBag.ReadyForCompliance = false;
-        
-        return View();
-    }
-
-    [Authorize]
-    [AuthorizeForScopes(ScopeKeySection = "Microsoft365:Scopes")]
-    public IActionResult GrantConsent()
-    {
-        // This action will trigger the consent flow
-        _logger.LogInformation("Graph API consent granted for user: {User}", User.Identity?.Name);
-        
-        // After successful consent, redirect back to index with consent granted
-        TempData["ConsentGranted"] = true;
-        return RedirectToAction("Index");
-    }
-
-    public IActionResult ConsentGranted()
-    {
-        // This action shows the interface after consent has been granted
-        ViewBag.UserName = User.Identity.Name;
-        ViewBag.RequiresAuthentication = false;
+        // Skip consent step - all scopes are requested during authentication
         ViewBag.RequiresConsent = false;
         ViewBag.ReadyForCompliance = true;
         
-        return View("Index");
+        return View();
     }
 
     [Authorize]
@@ -89,19 +65,6 @@ public class HomeController : Controller
         return await ProcessComplianceCheck(cancellationToken);
     }
 
-    [AuthorizeForScopes(Scopes = new string[] { 
-        "https://graph.microsoft.com/Files.Read.All", 
-        "https://graph.microsoft.com/Sites.Read.All", 
-        "https://graph.microsoft.com/Mail.Send", 
-        "https://graph.microsoft.com/User.Read.All" 
-    })]
-    [HttpGet]
-    public async Task<IActionResult> RunComplianceCheck()
-    {
-        // This handles the GET redirect after OAuth consent
-        return await ProcessComplianceCheck(CancellationToken.None);
-    }
-
     private async Task<IActionResult> ProcessComplianceCheck(CancellationToken cancellationToken)
     {
         try
@@ -114,7 +77,7 @@ public class HomeController : Controller
             ViewBag.ComplianceResult = response.LlmResponse;
             ViewBag.FileAuthor = response.FileAuthor;
             ViewBag.Timestamp = response.Timestamp;
-            ViewBag.UserName = User.Identity.Name;
+            ViewBag.UserName = User?.Identity?.Name;
             ViewBag.ReadyForCompliance = true;
 
             // Send email with results
@@ -163,7 +126,7 @@ public class HomeController : Controller
         {
             _logger.LogError(ex, "Error processing compliance check");
             ViewBag.Error = "An error occurred while processing the compliance check. Please try again.";
-            ViewBag.UserName = User.Identity.Name;
+            ViewBag.UserName = User?.Identity?.Name;
             ViewBag.ReadyForCompliance = true;
             return View("Index");
         }

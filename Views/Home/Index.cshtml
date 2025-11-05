@@ -15,32 +15,25 @@
         </div>
     }
 
-    @if (TempData["ConsentGranted"] != null)
-    {
-        <div class="alert alert-success" role="alert">
-            <strong>Success!</strong> Graph API permissions have been granted successfully. You can now run compliance checks.
-        </div>
-        <script>
-            // Update the view state after consent is granted
-            setTimeout(function() {
-                window.location.href = '@Url.Action("ConsentGranted")';
-            }, 2000);
-        </script>
-    }
-
-    @* Step 1: Authentication Status *@
+    @* Authentication Status *@
     @if (ViewBag.RequiresAuthentication == true)
     {
         @* User is not authenticated *@
         <div class="card border-danger">
             <div class="card-header bg-danger text-white">
                 <h5 class="mb-0">
-                    <i class="bi bi-exclamation-circle"></i> Step 1: Authentication - Required
+                    <i class="bi bi-exclamation-circle"></i> Step 1: Authentication & Permissions - Required
                 </h5>
             </div>
             <div class="card-body">
                 <p>Please sign in with your Microsoft 365 account to access the compliance checking features.</p>
-                <p class="mb-3">You'll need an account with access to SharePoint in your organization.</p>
+                <p class="mb-3">Your sign-in will include the following permissions:</p>
+                <ul class="mb-3">
+                    <li><strong>Read SharePoint files</strong> - To access policy documents</li>
+                    <li><strong>Read SharePoint sites</strong> - To search across your organization</li>
+                    <li><strong>Send emails</strong> - To notify document authors of compliance issues</li>
+                    <li><strong>Read user profiles</strong> - To identify document authors</li>
+                </ul>
                 <a asp-area="MicrosoftIdentity" asp-controller="Account" asp-action="SignIn" class="btn btn-danger btn-lg">
                     <i class="bi bi-person-lock"></i> Sign In with Microsoft 365
                 </a>
@@ -52,56 +45,20 @@
         <div class="card mb-4 border-success">
             <div class="card-header bg-success text-white">
                 <h5 class="mb-0">
-                    <i class="bi bi-check-circle"></i> Step 1: Authentication - Complete
+                    <i class="bi bi-check-circle"></i> Step 1: Authentication & Permissions - Complete
                 </h5>
             </div>
             <div class="card-body">
-                <p class="mb-0">Welcome, <strong>@ViewBag.UserName</strong>! You are successfully signed in.</p>
+                <p class="mb-2">Welcome, <strong>@ViewBag.UserName</strong>! You are successfully signed in with all required permissions.</p>
+                <p class="mb-0">You're ready to run compliance checks!</p>
             </div>
         </div>
 
-        @* Step 2: Graph API Permissions *@
-        @if (ViewBag.RequiresConsent == true)
-        {
-            <div class="card mb-4 border-warning">
-                <div class="card-header bg-warning text-dark">
-                    <h5 class="mb-0">
-                        <i class="bi bi-exclamation-triangle"></i> Step 2: Grant Permissions - Required
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <p>To run compliance checks, the application needs access to your SharePoint documents and email.</p>
-                    <p class="mb-3">The following permissions are required:</p>
-                    <ul class="mb-3">
-                        <li><strong>Read SharePoint files</strong> - To access policy documents</li>
-                        <li><strong>Read SharePoint sites</strong> - To search across your organization</li>
-                        <li><strong>Send emails</strong> - To notify document authors of compliance issues</li>
-                        <li><strong>Read user profiles</strong> - To identify document authors</li>
-                    </ul>
-                    <a href="@Url.Action("GrantConsent")" class="btn btn-warning btn-lg">
-                        <i class="bi bi-shield-lock"></i> Grant Permissions
-                    </a>
-                </div>
-            </div>
-        }
-        else if (ViewBag.ReadyForCompliance == true)
-        {
-            <div class="card mb-4 border-success">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">
-                        <i class="bi bi-check-circle"></i> Step 2: Permissions - Granted
-                    </h5>
-                </div>
-                <div class="card-body">
-                    <p class="mb-0">All required permissions have been granted. You're ready to run compliance checks!</p>
-                </div>
-            </div>
-
-            @* Step 3: Compliance Check Interface *@
+        @* Step 2: Compliance Check Interface *@
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5 class="mb-0">
-                        <i class="bi bi-shield-check"></i> Step 3: Run Compliance Check
+                        <i class="bi bi-shield-check"></i> Step 2: Run Compliance Check
                     </h5>
                 </div>
                 <div class="card-body">
@@ -191,7 +148,6 @@
                     </div>
                 </div>
             }
-        }
     }
     else
     {

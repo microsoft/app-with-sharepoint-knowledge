@@ -32,7 +32,7 @@ public class ChatService : IChatService
             var rulesFilter = _microsoft365Options.FilterExpression;
             var fileContentFilter = _microsoft365Options.FilterExpression;
 
-            string rulesQuery = "What are all the rules in rulebooks that apply to new policies";
+            string rulesQuery = _microsoft365Options.RulesContextQuery;
 
             // Step 1: Retrieve relevant content from Microsoft 365
             var retrievedRulesContext = await _retrievalService.SearchAsync(
@@ -40,7 +40,7 @@ public class ChatService : IChatService
                 rulesFilter,
                 cancellationToken);
 
-            string filesContentQuery = "What are all the relevant policies";
+            string filesContentQuery = _microsoft365Options.FileContextQuery;
 
             var retrievedFilesContext = await _retrievalService.SearchAsync(
                 filesContentQuery,
