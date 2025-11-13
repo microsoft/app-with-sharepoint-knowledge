@@ -25,8 +25,7 @@ public class Microsoft365Options
     public string ClientId { get; set; } = string.Empty;
     public string CopilotRetrievalEndpoint { get; set; } = "https://graph.microsoft.com/beta/copilot/retrieval";
     public string FilterExpression { get; set; } = string.Empty;
-    public bool UseUserAuthentication { get; set; } = true;
-    public string[] Scopes { get; set; } = { "https://graph.microsoft.com/Files.Read.All", "https://graph.microsoft.com/Sites.Read.All" };
+    public string[] Scopes { get; set; } = { };
 
     [Required(ErrorMessage = "FileContextQuery is required and cannot be empty")]
     [MinLength(1, ErrorMessage = "FileContextQuery cannot be empty")]

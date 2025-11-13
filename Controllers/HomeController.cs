@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Identity.Web;
 using AgentWithSPKnowledgeViaRetrieval.Models;
 using AgentWithSPKnowledgeViaRetrieval.Services;
+using AgentWithSPKnowledgeViaRetrieval.Filters;
 using System.Diagnostics;
 
 namespace AgentWithSPKnowledgeViaRetrieval.Controllers;
@@ -59,6 +60,8 @@ public class HomeController : Controller
         "https://graph.microsoft.com/Mail.Send", 
         "https://graph.microsoft.com/User.Read.All" 
     })]
+    [AuthorizeForAzureAIScopes]
+    [EnsureTokensAcquired]
     [HttpPost]
     public async Task<IActionResult> RunComplianceCheck(CancellationToken cancellationToken)
     {

@@ -5,6 +5,7 @@ using Azure.Core.Pipeline;
 using Azure.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Identity.Web;
 using AgentWithSPKnowledgeViaRetrieval.Models;
 using System.Text;
 using Azure;
@@ -21,6 +22,8 @@ public class FoundryService : IFoundryService
     public FoundryService(
         IOptions<AzureAIFoundryOptions> foundryOptions,
         IOptions<ChatSettingsOptions> chatSettings,
+        IMultiResourceTokenService tokenService,
+        ILoggerFactory loggerFactory,
         ILogger<FoundryService> logger)
     {
         _foundryOptions = foundryOptions.Value;
@@ -28,11 +31,17 @@ public class FoundryService : IFoundryService
         _logger = logger;
 
         var endpoint = new Uri(_foundryOptions.ProjectEndpoint);
-        var credential = new AzureKeyCredential(_foundryOptions.APIKey);
-
+        
+        // Use Azure AD user authentication with AzureAITokenCredential
+        // This uses pre-acquired tokens specifically for Azure AI services
+        var tokenCredential = new AzureAITokenCredential(
+            tokenService, 
+            loggerFactory.CreateLogger<AzureAITokenCredential>());
+        _logger.LogInformation("Using Azure AD user authentication for Azure AI Foundry with .default scope");
+        
         _chatClient = new ChatCompletionsClient(
             endpoint,
-            credential,
+            tokenCredential,
             new AzureAIInferenceClientOptions()
         );
     }

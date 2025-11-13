@@ -47,7 +47,12 @@
         - `Sites.Read.All`
         - `Mail.Send`
         - `User.Read.All`
-      - Click **Grant admin consent**
+      - For Azure AD authentication for Azure AI Foundry, also add:
+        - Go to **Add a permission** → **APIs my organization uses**
+        - Search for "Azure AI Services" or use the Application ID: `2ff814a6-3304-4ab8-85cb-cd0e6f879c1d`
+        - Select **Delegated permissions** → `user_impersonation`
+      - **Important**: Grant admin consent for all permissions to enable seamless token acquisition
+      - Click **Grant admin consent** for all permissions
 
 3. **Configure Application Settings**
 
@@ -84,6 +89,24 @@
 
       > [!NOTE]
       > You will need your Azure AI inference endpoint (which is not your Azure AI Foundry Project endpoint). To get this navigate to `Models + Endpoints > name of Model` Switch the SDK to `Azure AI Inference SDK` and the code panel should have some code sample with the relevant endpoint. This endpoint will look something like `https://{projectName}.cognitiveservices.azure.com/openai/deployments/{modelName}`
+
+      > [!IMPORTANT]  
+      > **Azure AI Foundry Authentication**
+      >
+      > The application uses **Azure AD User Authentication** for Azure AI Foundry:
+      > - The user must have `Azure AI User` role on the Azure AI Foundry project
+      > - Uses the logged-in user's Azure AD identity for secure access
+      > - Uses the `https://cognitiveservices.azure.com/.default` scope for comprehensive access
+      > - **Proactive Token Acquisition**: Attempts to acquire both Microsoft Graph and Azure AI tokens during initial login
+      > - **No API Key Required**: The APIKey field is kept for backward compatibility but is not used in authentication
+      > - The API key can be removed from configuration when using this option
+      >
+      > To grant Azure AI User role:
+      > 1. Go to your Azure AI Foundry project in Azure Portal
+      > 2. Navigate to **Access control (IAM)**
+      > 3. Click **Add** → **Add role assignment**  
+      > 4. Select **Azure AI User** role
+      > 5. Assign to the user or group
 
 4. **Run Locally**
 

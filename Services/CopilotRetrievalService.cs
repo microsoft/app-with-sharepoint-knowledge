@@ -16,23 +16,25 @@ public class CopilotRetrievalService : IRetrievalService
     private readonly Microsoft365Options _microsoft365Options;
     private readonly ChatSettingsOptions _chatSettings;
     private readonly ILogger<CopilotRetrievalService> _logger;
-    private readonly ITokenAcquisition _tokenAcquisition;
+    private readonly IMultiResourceTokenService _tokenService;
 
     public CopilotRetrievalService(
         IOptions<Microsoft365Options> microsoft365Options,
         IOptions<ChatSettingsOptions> chatSettings,
         ILogger<CopilotRetrievalService> logger,
-        ITokenAcquisition tokenAcquisition)
+        IMultiResourceTokenService tokenService,
+        ILoggerFactory loggerFactory)
     {
         _microsoft365Options = microsoft365Options.Value;
         _chatSettings = chatSettings.Value;
         _logger = logger;
-        _tokenAcquisition = tokenAcquisition;
+        _tokenService = tokenService;
 
-        // Create a delegated token credential for the authenticated user
-        var tokenCredential = new DelegateTokenCredential(_tokenAcquisition, _microsoft365Options.Scopes);
+        // Create a Graph-specific token credential for the authenticated user
+        var tokenCredential = new GraphTokenCredential(_tokenService, 
+            loggerFactory.CreateLogger<GraphTokenCredential>());
 
-        _graphClient = new GraphServiceClient(tokenCredential, _microsoft365Options.Scopes);
+        _graphClient = new GraphServiceClient(tokenCredential);
     }
 
     public async Task<List<RetrievedContent>> SearchAsync(string query, string _filterExpression, CancellationToken cancellationToken = default)
@@ -116,7 +118,7 @@ public class CopilotRetrievalService : IRetrievalService
     {
         try
         {
-            return await _tokenAcquisition.GetAccessTokenForUserAsync(_microsoft365Options.Scopes);
+            return await _tokenService.GetGraphTokenAsync();
         }
         catch (Microsoft.Identity.Web.MicrosoftIdentityWebChallengeUserException ex)
         {

@@ -1,5 +1,6 @@
 using Azure.Core;
 using Microsoft.Identity.Web;
+using Microsoft.Identity.Client;
 
 namespace AgentWithSPKnowledgeViaRetrieval.Services;
 
@@ -23,8 +24,21 @@ public class DelegateTokenCredential : TokenCredential
     {
         try
         {
-            var token = await _tokenAcquisition.GetAccessTokenForUserAsync(_scopes);
-            return new AccessToken(token, DateTimeOffset.UtcNow.AddHours(1)); // Assuming 1-hour expiry
+            // For Azure AI services, we need to make a fresh token request
+            // Use GetAccessTokenForUserAsync with incremental consent for the AI scope
+            var token = await _tokenAcquisition.GetAccessTokenForUserAsync(_scopes, user: null);
+            
+            // Parse the token to get expiration time (this is a simplified approach)
+            // In a real scenario, you might want to decode the JWT to get the actual expiry
+            var expiry = DateTimeOffset.UtcNow.AddHours(1);
+            
+            return new AccessToken(token, expiry);
+        }
+        catch (MsalUiRequiredException)
+        {
+            // This means the user needs to consent to additional scopes
+            // In a web app, this would trigger a redirect to the consent page
+            throw new UnauthorizedAccessException("Additional consent required for Azure AI services access");
         }
         catch (Exception)
         {
