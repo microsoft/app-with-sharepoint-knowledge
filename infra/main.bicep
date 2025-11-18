@@ -72,6 +72,7 @@ module foundry './shared/foundry.bicep' = {
     location: location
     tags: tags
     identityId: identity.outputs.id
+    identityPrincipalId: identity.outputs.principalId
   }
   scope: rg
 }
