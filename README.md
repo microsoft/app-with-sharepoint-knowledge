@@ -60,7 +60,27 @@ For a more comprehensive list of best practices and security recommendations for
 
 You can run this repository virtually by using GitHub Codespaces or VS Code Dev Containers. Click on one of the buttons above to open this repository in one of those options.
 
-After deployment, try asking the application to check policy compliance to test your web application.
+Follow the setup instructions in [Local Development Guide](./docs/LOCAL_DEVELOPMENT.md). After deployment, try asking the application to check policy compliance to test your web application.
+
+#### Deploying to Azure via azd
+
+Deploy it to Azure by running:
+
+```
+azd auth login
+azd up
+```
+
+This will deploy all the Azure resources necessary for this application.
+
+Once the resources are deployed:
+1. In the Azure Portal, search for the application "AI App with SharePoint Knowledge"
+2. Go to "API Permissions" and as an Admin click "Grant Admin consent"
+
+You can cleanup the resources deployed by running:
+```
+azd down --purge
+```
 
 ## Local Development
 
@@ -81,7 +101,7 @@ To prevent incurring unnecessary charges, it's important to clean up your Azure 
 **Deleting Resources:** To delete all associated resources and shut down the application, execute the following command:
 
 ```bash
-azd down
+azd down --purge
 ```
 
 Please note that this process may take up to 20 minutes to complete.

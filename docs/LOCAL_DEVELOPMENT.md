@@ -5,7 +5,7 @@
 - .NET 8.0 SDK
 - Azure AI Foundry resource  
 - Microsoft 365 tenant with SharePoint
-- Azure App Registration with delegated permissions
+- Azure App Registration fully configured
 
 ## Setup Instructions
 
@@ -34,13 +34,7 @@
         - Add logout URL: `https://localhost:5001/signout-callback-oidc`
         - Enable **ID tokens** under Implicit grant and hybrid flows
 
-   3. **Create Client Secret**:
-      - Go to **Certificates & secrets**
-      - Click **New client secret**
-      - Add description and set expiration
-      - **Copy the secret value** immediately (you won't see it again)
-
-   4. **Configure API Permissions**:
+   3. **Configure API Permissions**:
       - Go to **API permissions** → **Add a permission** → **Microsoft Graph** → **Delegated permissions**
       - Add these permissions:
         - `Files.Read.All`
@@ -49,7 +43,7 @@
         - `User.Read`
       - For Azure AD authentication for Azure AI Foundry, also add:
         - Go to **Add a permission** → **APIs my organization uses**
-        - Search for "Azure AI Services" or use the Application ID: `2ff814a6-3304-4ab8-85cb-cd0e6f879c1d`
+        - Search for "Microsoft Cognitive Services" or use the Application ID: `7d312290-28c8-473c-a0ed-8e53749b6d6d`
         - Select **Delegated permissions** → `user_impersonation`
       - **Important**: Grant admin consent for all permissions to enable seamless token acquisition
       - Click **Grant admin consent** for all permissions
@@ -71,19 +65,19 @@
 
       ```json
       {
-        "AzureAd": {
-          "TenantId": "your-tenant-id",
-          "ClientId": "your-client-id"
-        },
-        "AzureAIFoundry": {
-          "ProjectEndpoint": "your-azure-ai-inference-endpoint",
-          "ModelName": "your-model-name"
-        },
-        "Microsoft365": {
-          "TenantId": "your-tenant-id",
-          "ClientId": "your-client-id",
-          "FilterExpression": "path:\"https://your-sharepoint-site.sharepoint.com\""
-        }
+         "AzureAd": {
+           "TenantId": "your-tenant-id",
+           "ClientId": "your-client-id"
+         },
+         "AzureAIFoundry": {
+           "ProjectEndpoint": "your-azure-ai-inference-endpoint",
+           "ModelName": "your-model-name"
+         },
+         "Microsoft365": {
+           "TenantId": "your-tenant-id",
+           "ClientId": "your-client-id",
+           "FilterExpression": "path:\"https://your-sharepoint-site.sharepoint.com\""
+         }
       }
       ```
    3. **Runtime Secret Creation**
@@ -104,14 +98,7 @@
          - Create a new user-specific secret with format: `{user-guid}-Auto-Generated-{date}` (expires in 24 hours)
          - Configure it for the current session
 
-      3. **Multi-Developer Support**:
-         - Each developer gets their own secrets identified by their user GUID
-         - Previous secrets from the same user are automatically cleaned up
-         - No conflicts between different team members
-         - Secrets are named for easy identification: `12345678-1234-1234-1234-123456789012-Auto-Generated-2025-11-13-10-30`
-         - Auto-generated secrets expire in 24 hours
-
-      4. **Verify Operation**:
+      3. **Verify Operation**:
          - Check the console output during startup for secret creation and cleanup messages
          - The application will automatically handle user-specific secret management
 
